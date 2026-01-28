@@ -1,0 +1,12 @@
+# OS / Editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment files (Secrets!)
+.env
+.env.*
+
+# Temporary logs / artifacts
+*.log
