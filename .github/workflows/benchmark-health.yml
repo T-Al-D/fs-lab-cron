@@ -1,0 +1,72 @@
+# Benchmark backend health endpoints on a fixed schedule.
+# This workflow runs externally to avoid influencing backend or database behavior.
+
+name: Backend Benchmark (Health)
+
+on:
+  # Run every 30 minutes
+  schedule:
+    - cron: "*/30 * * * *"
+
+  # Allow manual execution for testing
+  workflow_dispatch:
+
+jobs:
+  benchmark-node:
+    name: Benchmark Node backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Measure Node backend /health
+        run: |
+          # Record start time (milliseconds)
+          START=$(date +%s%3N)
+
+          # Perform HTTP request and capture status code
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_NODE_URL)
+
+          # Record end time
+          END=$(date +%s%3N)
+
+          # Calculate request duration
+          DURATION=$((END - START))
+
+          # Send benchmark result to Supabase
+          curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
+            -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"service\": \"node\",
+              \"endpoint\": \"/health\",
+              \"request_type\": \"cold\",
+              \"response_time_ms\": $DURATION,
+              \"status_code\": $STATUS,
+              \"region\": \"eu\"
+            }"
+
+  benchmark-python:
+    name: Benchmark Python backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Measure Python backend /health
+        run: |
+          START=$(date +%s%3N)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_PYTHON_URL)
+          END=$(date +%s%3N)
+
+          DURATION=$((END - START))
+
+          curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
+            -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"service\": \"python\",
+              \"endpoint\": \"/health\",
+              \"request_type\": \"cold\",
+              \"response_time_ms\": $DURATION,
+              \"status_code\": $STATUS,
+              \"region\": \"eu\"
+            }"
