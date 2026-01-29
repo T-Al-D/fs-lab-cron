@@ -16,28 +16,20 @@ jobs:
     name: Benchmark Node backend
     runs-on: ubuntu-latest
 
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_NODE_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
+
     steps:
       - name: Measure Node backend /health
-
-        env:
-          BACKEND_NODE_URL: ${{ secrets.BACKEND_NODE_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
-
         run: |
-          # Record start time (milliseconds)
           START=$(date +%s%3N)
-
-          # Perform HTTP request and capture status code
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_NODE_URL)
-
-          # Record end time
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_URL)
           END=$(date +%s%3N)
 
-          # Calculate request duration
           DURATION=$((END - START))
 
-          # Send benchmark result to Supabase
           curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
             -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
             -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
@@ -56,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BACKEND_NODE_URL: ${{ secrets.BACKEND_PYTHON_URL }}
+      BACKEND_URL: ${{ secrets.BACKEND_PYTHON_URL }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
 
@@ -64,7 +56,7 @@ jobs:
       - name: Measure Python backend /health
         run: |
           START=$(date +%s%3N)
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_PYTHON_URL)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_URL)
           END=$(date +%s%3N)
 
           DURATION=$((END - START))
