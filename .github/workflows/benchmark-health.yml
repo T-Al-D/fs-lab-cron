@@ -92,7 +92,8 @@ jobs:
 
           DURATION=$((END - START))
 
-          curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
+          echo "Supabase response:"
+          curl -i -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
             -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
             -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
             -H "Content-Type: application/json" \
