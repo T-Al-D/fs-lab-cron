@@ -30,6 +30,7 @@ jobs:
 
           DURATION=$((END - START))
 
+          echo "Supabase response:"
           curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
             -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
             -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
@@ -61,6 +62,7 @@ jobs:
 
           DURATION=$((END - START))
 
+          echo "Supabase response:"
           curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
             -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
             -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
@@ -100,7 +102,7 @@ jobs:
             -d "{
               \"service\": \"go\",
               \"endpoint\": \"/health\",
-              \"request_type\": \"raw\",
+              \"request_type\": \"cold\",
               \"response_time_ms\": $DURATION,
               \"status_code\": $STATUS,
               \"region\": \"eu\"
