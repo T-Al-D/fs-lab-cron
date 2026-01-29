@@ -73,3 +73,34 @@ jobs:
               \"status_code\": $STATUS,
               \"region\": \"eu\"
             }"
+
+  benchmark-go:
+    name: Benchmark Go backend
+    runs-on: ubuntu-latest
+
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_GO_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
+
+    steps:
+      - name: Measure Go backend /health
+        run: |
+          START=$(date +%s%3N)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_URL)
+          END=$(date +%s%3N)
+
+          DURATION=$((END - START))
+
+          curl -X POST $SUPABASE_URL/rest/v1/benchmark_runs \
+            -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"service\": \"go\",
+              \"endpoint\": \"/health\",
+              \"request_type\": \"raw\",
+              \"response_time_ms\": $DURATION,
+              \"status_code\": $STATUS,
+              \"region\": \"eu\"
+            }"
