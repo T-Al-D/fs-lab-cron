@@ -38,7 +38,6 @@ jobs:
             -d "{
               \"service\": \"node\",
               \"endpoint\": \"/health\",
-              \"request_type\": \"cold\",
               \"response_time_ms\": $DURATION,
               \"status_code\": $STATUS,
               \"region\": \"eu\"
@@ -70,7 +69,6 @@ jobs:
             -d "{
               \"service\": \"python\",
               \"endpoint\": \"/health\",
-              \"request_type\": \"cold\",
               \"response_time_ms\": $DURATION,
               \"status_code\": $STATUS,
               \"region\": \"eu\"
@@ -102,7 +100,6 @@ jobs:
             -d "{
               \"service\": \"go\",
               \"endpoint\": \"/health\",
-              \"request_type\": \"cold\",
               \"response_time_ms\": $DURATION,
               \"status_code\": $STATUS,
               \"region\": \"eu\"
