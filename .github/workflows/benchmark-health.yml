@@ -18,6 +18,12 @@ jobs:
 
     steps:
       - name: Measure Node backend /health
+
+        env:
+          BACKEND_NODE_URL: ${{ secrets.BACKEND_NODE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
+
         run: |
           # Record start time (milliseconds)
           START=$(date +%s%3N)
@@ -48,6 +54,11 @@ jobs:
   benchmark-python:
     name: Benchmark Python backend
     runs-on: ubuntu-latest
+
+    env:
+      BACKEND_NODE_URL: ${{ secrets.BACKEND_PYTHON_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
 
     steps:
       - name: Measure Python backend /health
