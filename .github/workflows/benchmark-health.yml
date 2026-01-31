@@ -4,9 +4,9 @@
 name: Backend Benchmark (Health)
 
 on:
-  # Run every 30 minutes
+  # Run once every hour
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0 * * * *"
 
   # Allow manual execution for testing
   workflow_dispatch:
