@@ -1,0 +1,68 @@
+name: Benchmark Data Cleanup
+
+on:
+  # Run once per day at 03:00 UTC
+  # This ensures cleanup happens during low activity hours
+  schedule:
+    - cron: "0 3 * * *"
+
+  # Allow manual execution for testing or emergency cleanup
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    name: Delete old benchmark data
+    runs-on: ubuntu-latest
+
+    env:
+      # Supabase project base URL
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      # Service role key with full database privileges
+      SUPABASE_SECRET_SERVICE_KEY: ${{ secrets.SUPABASE_SECRET_SERVICE_KEY }}
+
+    steps:
+      - name: Delete rows older than 40 days
+        # Generate ISO-8601 timestamp in UTC format
+        # Example output: 2026-01-29T03:00:00Z
+        # Send HTTP DELETE request to Supabase REST API
+        # Filter syntax:
+        # created_at=lt.<timestamp>
+        # lt = less than
+        # Meaning:
+        # DELETE FROM benchmark_runs WHERE created_at < CUTOFF_DATE;
+        run: |
+          echo "Calculating timestamp for 40 days ago (UTC)..."
+
+
+          CUTOFF_DATE=$(date -u -d '40 days ago' +%Y-%m-%dT%H:%M:%SZ)
+
+          echo "Deleting records older than: $CUTOFF_DATE"
+
+
+          curl -X DELETE "$SUPABASE_URL/rest/v1/benchmark_runs?created_at=lt.$CUTOFF_DATE" \
+            -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY"
+
+          echo "Cleanup completed."steps:
+
+      - name: Delete rows older than 40 days
+        # Generate ISO-8601 timestamp in UTC format
+        # Example output: 2026-01-29T03:00:00Z
+        # Send HTTP DELETE request to Supabase REST API
+        # Filter syntax:
+        # created_at=lt.<timestamp>
+        # lt = less than
+        # Meaning:
+        # DELETE FROM benchmark_runs WHERE created_at < CUTOFF_DATE;
+        run: |
+          echo "Calculating timestamp for 40 days ago (UTC)..."
+
+          CUTOFF_DATE=$(date -u -d '40 days ago' +%Y-%m-%dT%H:%M:%SZ)
+
+          echo "Deleting records older than: $CUTOFF_DATE"
+
+          curl -X DELETE "$SUPABASE_URL/rest/v1/benchmark_runs?created_at=lt.$CUTOFF_DATE" \
+            -H "apikey: $SUPABASE_SECRET_SERVICE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SECRET_SERVICE_KEY"
+
+          echo "Cleanup completed."
